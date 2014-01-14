@@ -5,11 +5,26 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
+import flash.trace.Trace;
+import flash.external.ExternalInterface;
+
 class Clippy {
   // Main
   static function main() {
-    var text:String = flash.Lib.current.loaderInfo.parameters.text;
+
+    flash.Lib.trace("CLIPPY !!!!");
+
+    flash.Lib.trace( ExternalInterface.available );
     
+    var text:String = flash.Lib.current.loaderInfo.parameters.text;
+
+    ExternalInterface.addCallback("setText", function(v:String){
+      text = v;
+      flash.Lib.trace("updated text");
+      return "ok";
+    });
+
+  
     // label
     
     var label:TextField = new TextField();
@@ -35,6 +50,7 @@ class Clippy {
     
     button.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent) {
       flash.system.System.setClipboard(text);
+      flash.Lib.trace("clippy copied it");
       label.text = "copied!";
       label.setTextFormat(format);
     });
@@ -50,5 +66,9 @@ class Clippy {
     });
     
     flash.Lib.current.addChild(button);
+  }
+
+  public static function setText(v):String{
+    return "ok";
   }
 }
