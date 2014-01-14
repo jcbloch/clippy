@@ -18,6 +18,15 @@ class Clippy {
     
     var text:String = flash.Lib.current.loaderInfo.parameters.text;
 
+    var getTextFrom:String  = flash.Lib.current.loaderInfo.parameters.from;
+
+    var callExternal:Bool = false;
+    if (getTextFrom != null && getTextFrom != ""){
+      callExternal = true;
+    };
+
+    flash.Lib.trace( callExternal );
+
     ExternalInterface.addCallback("setText", function(v:String){
       text = v;
       flash.Lib.trace("updated text");
@@ -49,6 +58,10 @@ class Clippy {
     button.hitTestState = flash.Lib.attach("button_down");
     
     button.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent) {
+      if (callExternal){
+        flash.Lib.trace("calling external function for clip text");
+        text = ExternalInterface.call(getTextFrom);
+      } 
       flash.system.System.setClipboard(text);
       flash.Lib.trace("clippy copied it");
       label.text = "copied!";
